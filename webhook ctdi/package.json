@@ -1,0 +1,23 @@
+{
+  "name": "webhook-ctdi",
+  "version": "1.0.0",
+  "description": "CTDI webhook for model and chamber blocks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joe Varghese",
+  "license": "ISC",
+  "dependencies": {
+    "adaptivecards": "2.11.1",
+    "axios": "^1.4.0",
+    "chokidar": "^3.5.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "imap": "^0.8.19",
+    "mailparser": "^3.6.4",
+    "node": "^20.2.0",
+    "nodemon": "^2.0.22",
+    "swiper": "^9.3.2"
+  }
+}
