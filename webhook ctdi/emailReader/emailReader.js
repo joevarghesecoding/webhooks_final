@@ -1,10 +1,13 @@
 const Imap = require('imap');
 const mailparser = require('mailparser').simpleParser;
 const readEmails = require('./readEmail.js')
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const mailConfig = {
-    user: 'ctdimodelblock@outlook.com',
-    password: 'Bjgjvkvmrvcyokkf',
+    user: process.env.USER,
+    password: process.env.PASSWORD,
     host: 'imap-mail.outlook.com',
     port: 993,
     tls: true,
