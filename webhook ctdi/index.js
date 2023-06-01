@@ -12,7 +12,7 @@ dotenv.config();
 
 const getContent = async () => {
     try{
-        let content = emailReader.getEmails();
+        let content = await emailReader.getEmails();
         await new Promise(resolve => setTimeout(resolve, 2000));
         console.log("content " + JSON.stringify(content));
         return content;
