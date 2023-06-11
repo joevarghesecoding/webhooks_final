@@ -1,6 +1,5 @@
 const Imap = require('imap');
 const { simpleParser } = require('mailparser');
-const mailparser = require('mailparser').simpleParser;
 const axios = require("axios").default;
 require('dotenv').config({path: '../.env'});
 
