@@ -4,10 +4,8 @@ const axios = require("axios").default;
 require('dotenv').config({path: '../.env'});
 
 const imap = new Imap({
-    // user: process.env.USERNAME,
-    // password: process.env.PASSWORD,
-    user: 'ctdimodelblock@outlook.com',
-    password: 'Bjgjvkvmrvcyokkf',
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
     host: 'imap-mail.outlook.com',
     port: 993,
     tls: true,
