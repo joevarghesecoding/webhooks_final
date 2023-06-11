@@ -1,38 +1,28 @@
-const dotenv = require("dotenv");
 const express = require("express");
 const axios = require("axios").default;
 const emailReader = require('./emailReader/emailReader')
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-dotenv.config();
 
-
-const getContent = async () => {
-    try{
-        let content = await emailReader.getEmails();
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        console.log("content " + JSON.stringify(content));
-        return content;
-    } catch(error) {
-        console.log(error);
-    }
-}
-
-let content = getContent();
-// console.log("content " + content);
-
+const sendContent = async () => {
+  emailReader.getEmails().then((content) => {
     axios.post(process.env.TEAMS_WEBHOOK_URL, content)
     .then((teamsResponse) => {
-      console.log("Success!");
-      //res.status(204).send();
+      console.log("SUCCESS");
     })
-    .catch((err) => console.error(`Error sending to teams: ${err}`));
+    .catch((err) => {
+      console.log(`Error sending to teams: ${err}`);
+      console.log(err.response.status);
+      console.log(err.response.data);
+    })
+  });
+}
 
-
-
+sendContent();
 
 app.listen(port, () =>
   console.log(`Test app listening at http://localhost:${port}`)
