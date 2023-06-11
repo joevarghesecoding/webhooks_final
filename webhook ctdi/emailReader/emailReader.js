@@ -1,6 +1,7 @@
 const Imap = require('imap');
 const { simpleParser } = require('mailparser');
 const mailparser = require('mailparser').simpleParser;
+const axios = require("axios").default;
 require('dotenv').config({path: '../.env'});
 
 const imap = new Imap({
@@ -18,7 +19,7 @@ const imap = new Imap({
     //debug: console.log
 });
 
-const getEmails = async () => {
+const getEmails = () => {
     return new Promise((resolve, reject) => {
         let parsed;
     
@@ -34,33 +35,67 @@ const getEmails = async () => {
                         console.log('error at search');
                         throw err;
                     }
+
+                    if(!results || !results.length) {
+                        console.log('No unread emails');
+                        imap.end();
+                        return;
+                    }
                     let f = imap.fetch(results, { bodies: ''});
-                    f.on('message',  (msg, seqno) => {
+                    f.once('message',  (msg, seqno) => {
                         msg.once('body', async (stream, info) => {
                             parsed = await simpleParser(stream);
-                            console.log("parsed inside " +parsed.text);
+                            //console.log("parsed inside " +parsed.text);
                             resolve(parsed);
+                        });
+                        msg.once('attributes', attrs => {
+                            const {uid} = attrs;
+                            imap.addFlags(uid, ['\\Seen'], () => {
+                                console.log('Marked as read!');
+                            })
                         })
                     });
-                    f.on('error' , (error) => {
+                    f.once('error' , (error) => {
                         console.log('fetch error ' + error);
+                        return reject(error);
                     });
-                    f.on('end', () => {
+                    f.once('end', () => {
                         console.log('Done fetching all messages');
-                        //imap.end();
+                        imap.end();
+                        return;
                     });
                 });
             });
-            imap.on('error', err => {
+            imap.once('error', err => {
                 console.log(err);
             });
-            // imap.on('end', () => {
-            //     console.log('Connection ended');
-            // });
+            imap.once('end', ()=> {
+                console.log('Listener ended');
+                imap.end();
+                return;
+            })
         });
         })
 }
 
+function startMessageLoop() {
+    const checkInterval = 5000;
+    setInterval(() => {
+        getEmails().then((content) => {
+            axios.post(process.env.TEAMS_WEBHOOK_URL, content)
+            .then((teamsResponse) => {
+              console.log("SUCCESS");
+            })
+            .catch((err) => {
+              console.log(`Error sending to teams: ${err}`);
+              console.log(err.response.status);
+              console.log(err.response.data);
+            })
+          });
+    }, checkInterval);
+}
+
 module.exports = {
-    getEmails
+    getEmails,
+    startMessageLoop
 }

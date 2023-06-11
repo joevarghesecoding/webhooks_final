@@ -8,21 +8,21 @@ const port = 3000;
 
 app.use(express.json());
 
-const sendContent = async () => {
-  emailReader.getEmails().then((content) => {
-    axios.post(process.env.TEAMS_WEBHOOK_URL, content)
-    .then((teamsResponse) => {
-      console.log("SUCCESS");
-    })
-    .catch((err) => {
-      console.log(`Error sending to teams: ${err}`);
-      console.log(err.response.status);
-      console.log(err.response.data);
-    })
-  });
-}
+// const sendContent = async () => {
+//   // emailReader.getEmails().then((content) => {
+//   //   axios.post(process.env.TEAMS_WEBHOOK_URL, content)
+//   //   .then((teamsResponse) => {
+//   //     console.log("SUCCESS");
+//   //   })
+//   //   .catch((err) => {
+//   //     console.log(`Error sending to teams: ${err}`);
+//   //     console.log(err.response.status);
+//   //     console.log(err.response.data);
+//   //   })
+//   // });
+// }
 
-sendContent();
+emailReader.startMessageLoop();
 
 app.listen(port, () =>
   console.log(`Test app listening at http://localhost:${port}`)
