@@ -70,9 +70,10 @@ const getEmails = () => {
                 console.log(err);
             });
             imap.once('end', ()=> {
+                imap.removeAllListeners();
                 console.log('Listener ended');
                 imap.end();
-                return;
+
             })
         });
         })
