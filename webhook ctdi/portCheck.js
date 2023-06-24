@@ -22,11 +22,7 @@ function triggerScript(){
     console.log(`Port ${port} is available. Triggering the script...`);
     exec(`node ${path}`, (error, stdout, stderr) => {
         if(error) {
-            if(error.errno === -48){
-                console.log('Server checked and is in USE');
-            } else {
-                //console.log(`Error Executing. ${error.message}`);
-            }
+           console.log('Port in use. Restarting')
             return;
         }
 
