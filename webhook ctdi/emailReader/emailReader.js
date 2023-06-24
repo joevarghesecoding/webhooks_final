@@ -15,7 +15,7 @@ const imap = new Imap({
     debug: console.log,
     keepalive: {
         interval: 5000,
-        idleInterval: 6000,
+        idleInterval: 300000,
         forceNoop: true
     }
 });
@@ -35,6 +35,7 @@ const readEmails = (resolve, reject) => {
         let f = imap.fetch(results, { bodies: ''});
         f.once('message',  (msg, seqno) => {
             msg.once('body', async (stream, info) => {
+                let parsed;
                 parsed = await simpleParser(stream);
                 //console.log("parsed inside " +parsed.text);
                 resolve(parsed);
@@ -60,8 +61,6 @@ const readEmails = (resolve, reject) => {
 
 const getEmails = () => {
     return new Promise((resolve, reject) => {
-        let parsed;
-    
         imap.connect();
         imap.once('ready',  () => {
             console.log('Mail service listening');
