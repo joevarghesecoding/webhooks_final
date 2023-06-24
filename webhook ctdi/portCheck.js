@@ -51,7 +51,7 @@ function startPort(port) {
 
 
 function checkLoop(port) {
-    const checkInterval = 6000;
+    const checkInterval = 600000;
     startPort(port);
     setInterval(() => {
         console.log('checking port activity...');
