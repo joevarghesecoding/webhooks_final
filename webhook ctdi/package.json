@@ -15,7 +15,7 @@
     "chokidar": "^3.5.3",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
-    "imap": "https://github.com/mscdex/node-imap/tarball/master",
+    "imap": "^0.8.19",
     "mailparser": "^3.6.4",
     "node": "^20.2.0",
     "node-imap": "^0.9.6",
