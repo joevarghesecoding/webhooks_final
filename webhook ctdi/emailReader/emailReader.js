@@ -1,5 +1,6 @@
 const Imap = require('imap');
 const { simpleParser } = require('mailparser');
+const axios = require("axios").default;
 require('dotenv').config({path: '../.env'});
 
 const imap = new Imap({
@@ -29,7 +30,7 @@ const readEmails = (resolve, reject) => {
 
         if(!results || !results.length) {
             console.log('No unread emails');
-            //imap.end();
+            imap.end();
             return;
         }
         let f = imap.fetch(results, { bodies: ''});
@@ -51,11 +52,11 @@ const readEmails = (resolve, reject) => {
             console.log('fetch error ' + error);
             return reject(error);
         });
-        // f.once('end', () => {
-        //     console.log('Done fetching all messages');
-        //     imap.end();
-        //     return;
-        // });
+        f.once('end', () => {
+            console.log('Done fetching all messages');
+            imap.end();
+            return;
+        });
     });
 }
 
@@ -68,26 +69,42 @@ const getEmails = () => {
                 if(err) {
                     console.log('error at ready ' + err);
                 }
-                startMessageLoop(resolve, reject);
+                readEmails(resolve, reject);
             });
             imap.once('error', err => {
                 console.log(err);
             });
-            // imap.once('end', ()=> {
-            //     imap.removeAllListeners();
-            //     console.log('Listener ended');
-            //     imap.end();
+            imap.once('end', ()=> {
+                imap.removeAllListeners();
+                console.log('Listener ended');
+                imap.end();
 
-            // })
+            })
         });
         console.log('Mail service ended');
     })
 }
 
-function startMessageLoop(resolve, reject) {
-    const checkInterval = 5000;
+function startSearching(){
+    getEmails()
+        .then((content) => {
+            axios.post(process.env.TEAMS_WEBHOOK_URL, content)
+            .then((teamsResponse) => {
+              console.log("SUCCESS");
+            })
+            .catch((err) => {
+              console.log(`Error sending to teams: ${err}`);
+              console.log(err.response.status);
+              console.log(err.response.data);
+            })
+          });
+}
+
+function startMessageLoop() {
+    const checkInterval = 60000;
+    startSearching();
     setInterval(() => {
-        readEmails(resolve, reject)
+        startSearching();
     }, checkInterval);
 }
 

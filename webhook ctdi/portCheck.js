@@ -8,6 +8,7 @@ function checkPortInUse(port) {
     return new Promise((resolve) => {
         const server = net.createServer()
         .once('error', () => {
+            resolve(true);
             server.close();
         })
         .once('listening', () => {
@@ -19,15 +20,15 @@ function checkPortInUse(port) {
 }
 
 function triggerScript(){
-    console.log(`Port ${port} is available. Triggering the script...`);
+    //console.log(`Port ${port} is available. Triggering the script...`);
     exec(`node ${path}`, (error, stdout, stderr) => {
         if(error) {
-           console.log('Port in use. Restarting')
+           //console.log('Port in use. Restarting')
             return;
         }
 
         if(stderr){
-            console.log(`Script error. ${stderr}`);
+            //console.log(`Script error. ${stderr}`);
             return;
         }
 
@@ -36,6 +37,7 @@ function triggerScript(){
 }
 
 function startPort(port) {
+    //console.log('startPort active');
     checkPortInUse(port)
             .then((using) => {
                 if(using){
@@ -51,10 +53,11 @@ function startPort(port) {
 
 
 function checkLoop(port) {
-    const checkInterval = 600000;
+    const checkInterval = 300000;
+    //console.log(`Port ${port} is available. Triggering the script...`);
     startPort(port);
     setInterval(() => {
-        console.log('checking port activity...');
+        //console.log('checking port activity...');
         startPort(port);
     }, checkInterval);
 }
