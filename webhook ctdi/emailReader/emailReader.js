@@ -14,11 +14,11 @@ const imap = new Imap({
       },
     // requireTLS: true,
     debug: console.log,
-    keepalive: {
-        interval: 5000,
-        idleInterval: 300000,
-        forceNoop: true
-    }
+    // keepalive: {
+    //     interval: 5000,
+    //     idleInterval: 300000,
+    //     forceNoop: true
+    // }
 });
 
 const readEmails = (resolve, reject) => {
@@ -101,7 +101,7 @@ function startSearching(){
 }
 
 function startMessageLoop() {
-    const checkInterval = 60000;
+    const checkInterval = 15000;
     startSearching();
     setInterval(() => {
         startSearching();
